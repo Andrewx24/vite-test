@@ -10,7 +10,8 @@ app.use(cors());
 
 // Root route
 app.get('/', (req, res) => {
-  res.send('Hello, TypeScript with Express!');
+  // Use res.json() to send Users as a JSON response
+  res.json(Users);
 });
 
 // API root route
@@ -20,7 +21,8 @@ app.get('/api', (req, res) => {
 
 // API users route
 app.get('/api/users', (req, res) => {
-  res.json(Users);
+  // Combine Users and a message in the same object
+  res.json({ users: Users, message: 'Hello, TypeScript with Express!' });
 });
 
 console.log(Users);
