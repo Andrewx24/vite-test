@@ -10,6 +10,11 @@ export default defineConfig({
         changeOrigin: true,
         secure: false,
       },
+      "/api/submit": {
+        target: "http://localhost:8800",
+        changeOrigin: true,
+        secure: false,
+      },
     },
   },
   plugins: [react()],
