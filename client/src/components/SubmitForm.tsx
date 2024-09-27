@@ -3,22 +3,34 @@ import React, { useState } from 'react';
 const SubmitForm = () => {
   const [name, setName] = useState('');
   const [age, setAge] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState('');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Form validation
+    const parsedAge = parseInt(age);
+    if (isNaN(parsedAge) || parsedAge <= 0) {
+      setMessage('Please enter a valid age.');
+      return;
+    }
 
     const data = {
       name,
-      age: parseInt(age), // Convert age to an integer
+      age: parsedAge,
     };
 
     try {
+      setLoading(true); // Set loading state
+      setMessage(''); // Clear previous message
+
       const response = await fetch('/api/submit', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(data), // Send the data as JSON
+        body: JSON.stringify(data),
       });
 
       if (!response.ok) {
@@ -27,10 +39,14 @@ const SubmitForm = () => {
 
       const result = await response.json();
       console.log('Response from server:', result);
-      alert('Form submitted successfully!');
+      setMessage('Form submitted successfully!');
+      setName(''); // Reset form fields
+      setAge('');
     } catch (error) {
       console.error('Error submitting the form:', error);
-      alert('Error submitting the form');
+      setMessage('Error submitting the form.');
+    } finally {
+      setLoading(false); // Turn off loading state
     }
   };
 
@@ -66,10 +82,14 @@ const SubmitForm = () => {
         </div>
         <button
           type="submit"
-          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+          className={`bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded ${
+            loading ? 'opacity-50 cursor-not-allowed' : ''
+          }`}
+          disabled={loading}
         >
-          Submit
+          {loading ? 'Submitting...' : 'Submit'}
         </button>
+        {message && <p className="mt-4 text-red-500">{message}</p>}
       </form>
     </div>
   );
