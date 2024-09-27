@@ -8,12 +8,7 @@ export default defineConfig({
       "/api": {
         target: "http://localhost:8800",
         changeOrigin: true,
-        secure: false,
-      },
-      "/api/submit": {
-        target: "http://localhost:8800",
-        changeOrigin: true,
-        secure: false,
+        secure: false,  // Not required for HTTP, but fine to keep for future HTTPS scenarios
       },
     },
   },
