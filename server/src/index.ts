@@ -1,7 +1,7 @@
 import express from 'express';
 import Users from './users';
 import cors from 'cors';
-
+import ApiSubmitRouter from './routes/submit';
 const app = express();
 const port = 8800;
 
@@ -10,18 +10,10 @@ app.use(cors());
 
 app.use(express.json());
 
-app.post('/api/submit', (req, res) => {
-  const { name, age } = req.body;
-
-  if (!name || !age) {
-    return res.status(400).json({ message: 'Name and age are required' });
-  }
-
-  console.log(`Received name: ${name}, age: ${age}`);
-  
-  res.json({ message: 'Data received successfully', data: { name, age } });
-});
-
+app.use(ApiSubmitRouter, (req, res, next) => {
+  console.log('Time:', Date.now());
+  next();
+})
 
 // Root route
 app.get('/', (req, res) => {
