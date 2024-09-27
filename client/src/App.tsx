@@ -7,7 +7,7 @@ function App() {
     <main>
       <NewInput />
       <SubmitForm />
-      
+      <Form/>
     </main>
   );
 }

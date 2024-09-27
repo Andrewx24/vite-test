@@ -1,58 +1,52 @@
-import { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 
-// Define the shape of the data you expect from the API
-type Person = {
+// Define the type of submission data expected from the API
+type Submission = {
   name: string;
   age: number;
 };
 
-const requestAPI = async (): Promise<Person[]> => {
-  const response = await fetch('/api/submit');
+const Form: React.FC = () => {
+  const [submissions, setSubmissions] = useState<Submission[]>([]); // Use state to store the submissions array
 
-  if (!response.ok) {
-    throw new Error('Failed to fetch data');
-  }
-
-  const data = await response.json();
-
-  return data;
-};
-
-const Form = () => {
-  const [data, setData] = useState<Person[]>([]);
-  const [error, setError] = useState<string | null>(null); // State for handling errors
+  const getSubmissions = async () => {
+    try {
+      const response = await fetch('/api/submit'); // Use the correct API route
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      const data = await response.json(); // Parse the JSON response
+      setSubmissions(data.submissions); // Access the 'submissions' array in the response and set it in state
+    } catch (error) {
+      console.error('Fetch error:', error); // Handle fetch errors
+    }
+  };
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const result = await requestAPI(); // Call the API and get the result
-        setData(result); // Store the result in the state
-      } catch (err: any) {
-        setError(err.message); // Handle error case
-      }
-    };
-
-    fetchData(); // Call the fetchData function
-  }, []); // Empty dependency array to run only on mount
-
-  if (error) {
-    return <div>Error: {error}</div>; // Render error message if API call fails
-  }
+    getSubmissions(); // Fetch the data when the component mounts
+  }, []);
 
   return (
-    <div>
-      {data.length === 0 ? (
-        <div>Loading...</div> // Loading state if data hasn't been fetched yet
-      ) : (
-        data.map((item, index) => (
-          <div key={index}>
-            <h1>{item.name}</h1>
-            <h2>{item.age}</h2>
-          </div>
-        ))
-      )}
+    <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-center">
+      <h1 className="text-4xl font-bold text-blue-600 mb-6">Submissions List</h1>
+      <ul className="bg-white shadow-md rounded-lg p-6 w-full max-w-md">
+        {submissions.length > 0 ? (
+          submissions.map((submission, index) => (
+            <li
+              key={index}
+              className="py-2 px-4 bg-blue-50 hover:bg-blue-100 rounded-md mb-2 transition duration-300"
+            >
+              <h2 className="font-semibold">{submission.name}</h2>
+              <p className="text-gray-600">Age: {submission.age}</p>
+            </li>
+          ))
+        ) : (
+          <li className="text-gray-500">No submissions found</li>
+        )}
+      </ul>
     </div>
   );
 };
 
 export default Form;
+
