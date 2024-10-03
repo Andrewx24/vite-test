@@ -18,7 +18,9 @@ app.use(ApiSubmitRouter, (req, res, next) => {
 // Root route
 app.get('/', (req, res) => {
   // Use res.json() to send Users as a JSON response
+  
   res.json(Users);
+  
 });
 
 // API root route
